@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kinesis"
-	"github.com/resmoio/kubernetes-event-exporter/pkg/kube"
+	"github.com/blawson327/kubernetes-event-exporter/pkg/kube"
 )
 
 type KinesisConfig struct {

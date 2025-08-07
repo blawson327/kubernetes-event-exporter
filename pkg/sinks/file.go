@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/resmoio/kubernetes-event-exporter/pkg/kube"
+	"github.com/blawson327/kubernetes-event-exporter/pkg/kube"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
