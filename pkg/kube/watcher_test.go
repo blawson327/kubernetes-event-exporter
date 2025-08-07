@@ -76,7 +76,7 @@ func newMockEventWatcher(MaxEventAgeSeconds int64, metricsStore *metrics.Store) 
 func TestEventWatcher_EventAge_whenEventCreatedBeforeStartup(t *testing.T) {
 	// should not discard events as old as 300s=5m
 	var MaxEventAgeSeconds int64 = 300
-	metricsStore := metrics.NewMetricsStore("test_")
+	metricsStore := metrics.NewMetricsStore("test_", "default")
 	ew := newMockEventWatcher(MaxEventAgeSeconds, metricsStore)
 	output := &bytes.Buffer{}
 	log.Logger = log.Logger.Output(output)
@@ -123,7 +123,7 @@ func TestEventWatcher_EventAge_whenEventCreatedBeforeStartup(t *testing.T) {
 func TestEventWatcher_EventAge_whenEventCreatedAfterStartupAndBeforeMaxAge(t *testing.T) {
 	// should not discard events as old as 300s=5m
 	var MaxEventAgeSeconds int64 = 300
-	metricsStore := metrics.NewMetricsStore("test_")
+	metricsStore := metrics.NewMetricsStore("test_", "default")
 	ew := newMockEventWatcher(MaxEventAgeSeconds, metricsStore)
 	output := &bytes.Buffer{}
 	log.Logger = log.Logger.Output(output)
@@ -185,7 +185,7 @@ func TestEventWatcher_EventAge_whenEventCreatedAfterStartupAndBeforeMaxAge(t *te
 func TestEventWatcher_EventAge_whenEventCreatedAfterStartupAndAfterMaxAge(t *testing.T) {
 	// should not discard events as old as 300s=5m
 	var MaxEventAgeSeconds int64 = 300
-	metricsStore := metrics.NewMetricsStore("test_")
+	metricsStore := metrics.NewMetricsStore("test_","default")
 	ew := newMockEventWatcher(MaxEventAgeSeconds, metricsStore)
 	output := &bytes.Buffer{}
 	log.Logger = log.Logger.Output(output)
@@ -235,7 +235,7 @@ func TestEventWatcher_EventAge_whenEventCreatedAfterStartupAndAfterMaxAge(t *tes
 }
 
 func TestOnEvent_WithObjectMetadata(t *testing.T) {
-	metricsStore := metrics.NewMetricsStore("test_")
+	metricsStore := metrics.NewMetricsStore("test_","default")
 	defer metrics.DestroyMetricsStore(metricsStore)
 	ew := newMockEventWatcher(300, metricsStore)
 
@@ -271,7 +271,7 @@ func TestOnEvent_WithObjectMetadata(t *testing.T) {
 }
 
 func TestOnEvent_DeletedObjects(t *testing.T) {
-	metricsStore := metrics.NewMetricsStore("test_")
+	metricsStore := metrics.NewMetricsStore("test_","default")
 	defer metrics.DestroyMetricsStore(metricsStore)
 	ew := newMockEventWatcher(300, metricsStore)
 	ew.objectMetadataCache.(*mockObjectMetadataProvider).objDeleted = true
