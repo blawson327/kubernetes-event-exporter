@@ -1,4 +1,4 @@
-FROM golang:1.20 AS builder
+FROM golang:1.24 AS builder
 
 ARG VERSION
 ENV PKG github.com/blawson327/kubernetes-event-exporter/pkg
