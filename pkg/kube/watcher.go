@@ -57,19 +57,28 @@ func NewEventWatcher(config *rest.Config, namespace string, MaxEventAgeSeconds i
 	return watcher
 }
 
-func (e *EventWatcher) OnAdd(obj interface{}) {
+
+func (e *EventWatcher) OnAdd(obj interface{}, isInInititalList bool) {
 	event := obj.(*corev1.Event)
 	e.onEvent(event)
 }
 
+//OnUpdate is called when existing Event is modified
 func (e *EventWatcher) OnUpdate(oldObj, newObj interface{}) {
-	// Ignore updates
+	// Process updates as new events (handles aggregated series)
+	event := newObj.(*corev1.Event)
+	e.onEvent(event)
 }
 
 // Ignore events older than the maxEventAgeSeconds
 func (e *EventWatcher) isEventDiscarded(event *corev1.Event) bool {
-	timestamp := event.LastTimestamp.Time
-	if timestamp.IsZero() {
+	// Use the most recent timestamp: series, then LastTimestamp, then EventTime
+	var timestamp time.Time
+	if event.Series != nil && !event.Series.LastObservedTime.Time.IsZero() {
+		timestamp = event.Series.LastObservedTime.Time
+	} else if !event.LastTimestamp.Time.IsZero() {
+		timestamp = event.LastTimestamp.Time
+	} else {
 		timestamp = event.EventTime.Time
 	}
 	eventAge := time.Since(timestamp)
@@ -81,7 +90,7 @@ func (e *EventWatcher) isEventDiscarded(event *corev1.Event) bool {
 				Str("event age", eventAge.String()).
 				Str("event namespace", event.Namespace).
 				Str("event name", event.Name).
-				Msg("Event discarded as being older then maxEventAgeSeconds")
+				Msg("Event discarded as being older than maxEventAgeSeconds")
 			e.metricsStore.EventsDiscarded.Inc()
 		}
 		return true
